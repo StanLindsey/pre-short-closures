@@ -14,5 +14,6 @@
     "extra": {
         "macros": ["source/macros.yay"]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

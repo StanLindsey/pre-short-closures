@@ -118,7 +118,7 @@ macro ·recursion {
 } >> function($ast) {
     $function = \Pre\Plugin\getFunction("shortClosersParser");
     $function($ast, $multiArgs = false);
-} >> {
+} >> {··trim(
     ·scope ?·{
         [·scope ···(, ) { ·var = ·var ?? null}, "fn" => function (·argName) use (··trim(·scope ···(, ) {&·var})) {
             return ·body;
@@ -130,7 +130,7 @@ macro ·recursion {
             return ·body;
         }
     }
-}
+)}
 
 macro ·recursion {
     ·chain(
