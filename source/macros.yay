@@ -13,16 +13,7 @@ macro ·recursion {
                     ))·argType,
                     ·token(T_VARIABLE)·argName,
                     ·optional(·token("="))·argAssignmentEq,
-                    ·optional(·either(
-                        ·ns(),
-                        ·token(T_CONSTANT_ENCAPSED_STRING),
-                        ·token(T_LNUMBER),
-                        ·token(T_DNUMBER),
-                        ·token(T_STRING),
-                        ·chain(
-                            ·token("["), ·layer(), ·token("]")
-                        )
-                    ))·argAssignmentVal
+                    ·optional(·expression())·argAssignmentVal
                 )·arg,
                 ·token(",")
             )
@@ -38,54 +29,18 @@ macro ·recursion {
                 )
             )
         )·returnType,
-        ·token(T_DOUBLE_ARROW),
+        ·either(
+            ·token(T_DOUBLE_ARROW),
+            ·buffer("⇒")
+        ),
         ·token("{"),
         ·layer()·body,
         ·token("}"),
-        ·_()·scope,
-        ·_()·simple
+        ·_()·scope
     )
 } >> function($ast) {
-    $defined = [];
-
-    foreach ($ast->{"·args"} as $node) {
-        $name = (string) $node["·arg"]["·argName"];
-        $defined[$name] = true;
-    }
-
-    $bound = false;
-    $scope = new \Yay\Ast("·scope");
-
-    $pushed = [];
-
-    foreach ($ast->{"·body"} as $token) {
-        $name = $token->value();
-
-        if (!$token->is(T_VARIABLE)) {
-            continue;
-        }
-
-        if (isset($defined[$name]) || isset($pushed[$name])) {
-            continue;
-        }
-
-        if (substr($name, 1) === "this") {
-            continue;
-        }
-
-        $scope->push(new \Yay\Ast("·var", $token));
-        $pushed[$name] = true;
-        $bound = true;
-    }
-
-    if ($bound) {
-      $ast->append($scope);
-    } else {
-      $simple = new \Yay\Ast("·simple");
-      $simple->push(new \Yay\Ast());
-
-      $ast->append($simple);
-    }
+    $function = \Pre\Plugin\getFunction("shortClosersParser");
+    $function($ast, $multiArgs = true);
 } >> {··trim(
     ·scope ?·{
         [·scope ···(, ) { ·var = ·var ?? null}, "fn" => ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
@@ -93,8 +48,111 @@ macro ·recursion {
         }]["fn"]
     }
 
-    ·simple ?·{
+    ·scope !·{
         ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) ·returnType) {
+            ··trim(·body)
+        }
+    }
+)}
+
+macro ·recursion {
+    ·chain(
+        ·token("("),
+        ·optional(
+            ·ls(
+                ·chain(
+                    ·optional(·either(
+                        ·ns(),
+                        ·token(T_ARRAY),
+                        ·token(T_CALLABLE)
+                    ))·argType,
+                    ·token(T_VARIABLE)·argName,
+                    ·optional(·token("="))·argAssignmentEq,
+                    ·optional(·expression())·argAssignmentVal
+                )·arg,
+                ·token(",")
+            )
+        )·args,
+        ·token(")"),
+        ·optional(
+            ·chain(
+                ·token(":"),
+                ·either(
+                    ·ns(),
+                    ·token(T_ARRAY),
+                    ·token(T_CALLABLE)
+                )
+            )
+        )·returnType,
+        ·either(
+            ·token(T_DOUBLE_ARROW),
+            ·buffer("⇒")
+        ),
+        ·expression()·body,
+        ·_()·scope
+    )
+} >> function($ast) {
+    $function = \Pre\Plugin\getFunction("shortClosersParser");
+    $function($ast, $multiArgs = true);
+} >> {··trim(
+    ·scope ?·{
+        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
+            return ·body;
+        }]["fn"]
+    }
+
+    ·scope !·{
+        ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) ·returnType) {
+            return ·body;
+        }
+    }
+)}
+
+macro ·recursion {
+    ·chain(
+        ·token(T_VARIABLE)·argName,
+        ·buffer("⇒"),
+        ·expression()·body,
+        ·_()·scope
+    )
+} >> function($ast) {
+    $function = \Pre\Plugin\getFunction("shortClosersParser");
+    $function($ast, $multiArgs = false);
+} >> {
+    ·scope ?·{
+        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => function (·argName) use (··trim(·scope ···(, ) {&·var})) {
+            return ·body;
+        }]["fn"]
+    }
+
+    ·scope !·{
+        function (·argName) {
+            return ·body;
+        }
+    }
+}
+
+macro ·recursion {
+    ·chain(
+        ·token(T_VARIABLE)·argName,
+        ·buffer("⇒"),
+        ·token("{"),
+        ·layer()·body,
+        ·token("}"),
+        ·_()·scope
+    )
+} >> function($ast) {
+    $function = \Pre\Plugin\getFunction("shortClosersParser");
+    $function($ast, $multiArgs = false);
+} >> {··trim(
+    ·scope ?·{
+        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => function (·argName) use (··trim(·scope ···(, ) {&·var})) {
+            ··trim(·body)
+        }]["fn"]
+    }
+
+    ·scope !·{
+        function (·argName) {
             ··trim(·body)
         }
     }

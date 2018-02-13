@@ -26,6 +26,7 @@ class MacroTest extends TestCase
         $specs = [];
 
         $files = [
+            __DIR__ . "/specs/arg-type-array.spec",
             __DIR__ . "/specs/arg-type-callable.spec",
             __DIR__ . "/specs/recursion.spec",
             __DIR__ . "/specs/return-type-array.spec",
@@ -34,6 +35,8 @@ class MacroTest extends TestCase
             __DIR__ . "/specs/return-type-string.spec",
             __DIR__ . "/specs/return-type-void.spec",
             __DIR__ . "/specs/short-closures.spec",
+            __DIR__ . "/specs/single-expression-closures.spec",
+            __DIR__ . "/specs/unicode-operator.spec",
         ];
 
         foreach ($files as $file) {
