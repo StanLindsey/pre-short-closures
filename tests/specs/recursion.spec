@@ -34,10 +34,10 @@ $cb = () => {
 $foo = "hello";
 $bar = "world";
 
-$cb = [$foo = $foo ?? null, $bar = $bar ?? null, "fn" => function () use (&$foo, &$bar) {
-    return [$foo = $foo ?? null, $bar = $bar ?? null, "fn" => function () use (&$foo, &$bar) {
-        return [$foo = $foo ?? null, $bar = $bar ?? null, "fn" => function () use (&$foo, &$bar) {
+$cb = function () use (&$foo, &$bar) {
+    return function () use (&$foo, &$bar) {
+        return function () use (&$foo, &$bar) {
             print $foo . $bar;
-        }]["fn"];
-    }]["fn"];
-}]["fn"];
+        };
+    };
+};

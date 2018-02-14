@@ -16,9 +16,9 @@ array_map(($x) ⇒ $x + $z, [1, 2, 3]);
 
 $z = 1;
 
-array_map([$z = $z ?? null, "fn" => function ($x) use (&$z) {
+array_map(function ($x) use (&$z) {
     return $x+$z;
-}]["fn"], [1, 2, 3]);
+}, [1, 2, 3]);
 
 ---
 

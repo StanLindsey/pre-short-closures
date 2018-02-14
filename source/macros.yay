@@ -43,9 +43,9 @@ macro ·recursion {
     $function($ast, $multiArgs = true);
 } >> {··trim(
     ·scope ?·{
-        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
+        ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
             ··trim(·body)
-        }]["fn"]
+        }
     }
 
     ·scope !·{
@@ -96,9 +96,9 @@ macro ·recursion {
     $function($ast, $multiArgs = true);
 } >> {··trim(
     ·scope ?·{
-        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
+        ··trim(function (·args ···(, ) {··trim(·arg ··· { ·argType ·argName ·argAssignmentEq ·argAssignmentVal } )}) use (··trim(·scope ···(, ) {&·var})) ·returnType) {
             return ·body;
-        }]["fn"]
+        }
     }
 
     ·scope !·{
@@ -120,9 +120,9 @@ macro ·recursion {
     $function($ast, $multiArgs = false);
 } >> {··trim(
     ·scope ?·{
-        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => function (·argName) use (··trim(·scope ···(, ) {&·var})) {
+        function (·argName) use (··trim(·scope ···(, ) {&·var})) {
             return ·body;
-        }]["fn"]
+        }
     }
 
     ·scope !·{
@@ -146,9 +146,9 @@ macro ·recursion {
     $function($ast, $multiArgs = false);
 } >> {··trim(
     ·scope ?·{
-        [·scope ···(, ) { ·var = ·var ?? null}, "fn" => function (·argName) use (··trim(·scope ···(, ) {&·var})) {
+        function (·argName) use (··trim(·scope ···(, ) {&·var})) {
             ··trim(·body)
-        }]["fn"]
+        }
     }
 
     ·scope !·{
